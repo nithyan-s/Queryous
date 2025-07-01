@@ -1,0 +1,88 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables and configuration
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+config.ini
+database.ini
+db_config.py
+
+# API keys and secrets
+secrets.json
+api_keys.txt
+credentials.json
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs and runtime data
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Uploads and data directories
+uploads/
+data/
+exports/
+downloads/
+
+# Testing and coverage
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+.hypothesis/
+nosetests.xml
+coverage.xml
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Cache directories
+.cache/
+cache/
+.mypy_cache/
