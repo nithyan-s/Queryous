@@ -252,18 +252,6 @@ LLM_API_URL='LLM_CHAT_END_POINT'
 LLM_API_KEY='YOUR_API_KEY'
 ```
 
-# Contribute
-To contribute, follow these steps:
-```bash
-- Fork the repository
-- Create your feature branch (git checkout -b feature/AmazingFeature)
-- Commit your changes (git commit -m 'Add some AmazingFeature')
-- Push to the branch (git push origin feature/AmazingFeature)
-- Open a Pull Request 
-```
-
-# Remark
-This was built as a Proof of Concept(POC) under the period of internship May-Jul 2025.
 
 
 
