@@ -55,6 +55,9 @@ from utils import (
     log_error
 )
 
+# Authentication imports
+from auth_routes import router as auth_router
+
 # FASTAPI APPLICATION SETUP
 
 # Enable json data transformer for Altair (instead of vegafusion to avoid dependency issues)
@@ -77,6 +80,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include authentication routes
+app.include_router(auth_router)
 
 class QueryRequest(BaseModel):
     """
