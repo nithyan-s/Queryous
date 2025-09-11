@@ -15,9 +15,10 @@ const ChatMessage = ({
 }) => {
   const [chartType, setChartType] = useState("bar");
   const [currentSpec, setCurrentSpec] = useState(null);
-    // Pagination state
+  
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage] = useState(10); // Fixed rows per page
+  const [rowsPerPage] = useState(10);
   
   // Calculate pagination
   const totalRows = message.data ? message.data.length : 0;
@@ -28,9 +29,7 @@ const ChatMessage = ({
 
   useEffect(() => {
     if (message.data && message.data.length > 0) {
-      
       try {
-        // Create spec directly here instead of relying on graphHelper
         const columns = Object.keys(message.data[0]);
         if (columns.length < 2) {
           console.warn('Insufficient columns for chart');
@@ -41,7 +40,6 @@ const ChatMessage = ({
         const [xField, yField] = columns;
         let spec = null;
         
-        // Create VegaLite spec based on chart type
         switch (chartType) {
           case 'bar':
             spec = {
@@ -49,13 +47,13 @@ const ChatMessage = ({
               data: { values: message.data },
               mark: { 
                 type: 'bar',
-                color: darkMode ? "#9ca3af" : "#4b5563"
+                color: darkMode ? "#3b82f6" : "#6366f1"
               },
               encoding: {
                 x: { field: xField, type: 'nominal', axis: { labelAngle: -45 } },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: 500,
+              width: "container",
               height: 300
             };
             break;
@@ -66,7 +64,7 @@ const ChatMessage = ({
               data: { values: message.data },
               mark: { 
                 type: 'line',
-                color: darkMode ? "#9ca3af" : "#4b5563",
+                color: darkMode ? "#3b82f6" : "#6366f1",
                 strokeWidth: 2,
                 point: true
               },
@@ -74,7 +72,7 @@ const ChatMessage = ({
                 x: { field: xField, type: 'ordinal' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: 500,
+              width: "container",
               height: 300
             };
             break;
@@ -85,14 +83,14 @@ const ChatMessage = ({
               data: { values: message.data },
               mark: { 
                 type: 'point',
-                color: darkMode ? "#9ca3af" : "#4b5563",
+                color: darkMode ? "#3b82f6" : "#6366f1",
                 size: 60
               },
               encoding: {
                 x: { field: xField, type: 'quantitative' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: 500,
+              width: "container",
               height: 300
             };
             break;
@@ -103,14 +101,14 @@ const ChatMessage = ({
               data: { values: message.data },
               mark: { 
                 type: 'area',
-                color: darkMode ? "#9ca3af" : "#4b5563",
+                color: darkMode ? "#3b82f6" : "#6366f1",
                 opacity: 0.7
               },
               encoding: {
                 x: { field: xField, type: 'ordinal' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: 500,
+              width: "container",
               height: 300
             };
             break;
@@ -127,12 +125,12 @@ const ChatMessage = ({
                   type: 'nominal',
                   scale: {
                     range: darkMode 
-                      ? ["#9ca3af", "#6b7280", "#4b5563", "#374151", "#d1d5db", "#f3f4f6"]
-                      : ["#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db"]
+                      ? ["#3b82f6", "#1d4ed8", "#2563eb", "#1e40af", "#1e3a8a"]
+                      : ["#6366f1", "#4f46e5", "#4338ca", "#3730a3", "#312e81"]
                   }
                 }
               },
-              width: 500,
+              width: "container",
               height: 300,
               view: { stroke: null }
             };
@@ -144,35 +142,33 @@ const ChatMessage = ({
               data: { values: message.data },
               mark: { 
                 type: 'bar',
-                color: darkMode ? "#9ca3af" : "#4b5563"
+                color: darkMode ? "#3b82f6" : "#6366f1"
               },
               encoding: {
                 x: { field: xField, type: 'nominal', axis: { labelAngle: -45 } },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: 500,
+              width: "container",
               height: 300
             };
         }
         
         if (spec) {
-          // Apply global theming
-          spec.background = darkMode ? "#1f2937" : "#ffffff";
+          spec.background = darkMode ? "#1e293b" : "#ffffff";
           spec.config = {
             axis: {
-              domainColor: darkMode ? "#d1d5db" : "#374151",
-              tickColor: darkMode ? "#d1d5db" : "#374151",
-              labelColor: darkMode ? "#f3f4f6" : "#1f2937",
-              titleColor: darkMode ? "#f3f4f6" : "#1f2937",
-              gridColor: darkMode ? "#374151" : "#e5e7eb",
+              domainColor: darkMode ? "#3b82f6" : "#6366f1",
+              tickColor: darkMode ? "#3b82f6" : "#6366f1",
+              labelColor: darkMode ? "#e2e8f0" : "#1e293b",
+              titleColor: darkMode ? "#e2e8f0" : "#1e293b",
+              gridColor: darkMode ? "#334155" : "#e2e8f0",
             },
             legend: {
-              labelColor: darkMode ? "#f3f4f6" : "#1f2937",
-              titleColor: darkMode ? "#f3f4f6" : "#1f2937",
+              labelColor: darkMode ? "#e2e8f0" : "#1e293b",
+              titleColor: darkMode ? "#e2e8f0" : "#1e293b",
             }
           };
           
-          console.log('Generated spec:', spec);
           setCurrentSpec(spec);
         } else {
           setCurrentSpec(null);
@@ -186,7 +182,6 @@ const ChatMessage = ({
     }
   }, [chartType, message.data, darkMode]);
 
-  // Reset pagination when data changes
   useEffect(() => {
     setCurrentPage(0);
   }, [message.data]);
@@ -205,74 +200,71 @@ const ChatMessage = ({
     setCurrentPage(prev => Math.min(totalPages - 1, prev + 1));
   };
 
-  // Debug function to test chart rendering
-  const createTestChart = () => {
-    const testData = [
-      { category: 'A', value: 28 },
-      { category: 'B', value: 55 },
-      { category: 'C', value: 43 },
-      { category: 'D', value: 91 },
-      { category: 'E', value: 81 }
-    ];
-    
-    const testSpec = {
-      $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      data: { values: testData },
-      mark: 'bar',
-      encoding: {
-        x: { field: 'category', type: 'nominal' },
-        y: { field: 'value', type: 'quantitative' }
-      },
-      width: 500,
-      height: 300
-    };
-    
-    setCurrentSpec(testSpec);
-  };
-
-  
   return (
     <div
-      className={`flex ${
+      className={`flex px-2 sm:px-4 ${
         message.type === "user" ? "justify-end" : "justify-start"
       }`}
     >
       <div
-        className={`flex max-w-[85%] ${
+        className={`flex w-full max-w-[95%] sm:max-w-[85%] lg:max-w-[80%] xl:max-w-[75%] ${
           message.type === "user" ? "flex-row-reverse" : "flex-row"
         }`}
-      >        <div
-          className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
-            message.type === "user"
-              ? darkMode
-                ? "bg-white text-black ml-4"
-                : "bg-black text-white ml-4"
-              : darkMode
-                ? "bg-black text-white mr-4"
-                : "bg-white text-black mr-4 border border-gray-300"
+      >        
+        {/* Avatar */}
+        <div
+          className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-300 ${
+            message.type === "user" ? "ml-2 sm:ml-4" : "mr-2 sm:mr-4"
           }`}
+          style={{
+            background: message.type === "user"
+              ? (darkMode 
+                  ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+                  : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)')
+              : (darkMode
+                  ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
+                  : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'),
+            border: message.type === "bot" && !darkMode ? '1px solid rgba(99, 102, 241, 0.2)' : 'none'
+          }}
         >
           {message.type === "user" ? (
-            <User className="w-5 h-5" />
+            <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
           ) : (
-            <BotMessageSquare className="w-5 h-5" />
+            <BotMessageSquare className={`w-4 h-4 sm:w-6 sm:h-6 ${darkMode ? 'text-blue-300' : 'text-indigo-600'}`} />
           )}
         </div>
-        <div
-          className={`rounded-lg px-6 py-4 shadow-lg transition-all duration-300 hover:shadow-xl ${
-            message.type === "user"
-              ? darkMode
-                ? "bg-white text-black"
-                : "bg-black text-white"
-              : darkMode
-              ? "bg-gray-800 text-gray-100 border border-gray-700"
-              : "bg-white text-gray-900 border border-gray-200"
-          }`}
-        >
-          <div className="text-sm leading-relaxed">{message.content}</div>
 
+        {/* Message Content */}
+        <div
+          className={`rounded-2xl px-3 py-3 sm:px-6 sm:py-4 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] ${
+            message.type === "user"
+              ? "text-white"
+              : darkMode
+              ? "text-blue-50"
+              : "text-slate-900"
+          }`}
+          style={{
+            background: message.type === "user"
+              ? (darkMode 
+                  ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+                  : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)')
+              : (darkMode
+                  ? 'rgba(30, 41, 59, 0.8)'
+                  : 'rgba(255, 255, 255, 0.9)'),
+            border: message.type === "bot" 
+              ? (darkMode 
+                  ? '1px solid rgba(59, 130, 246, 0.2)'
+                  : '1px solid rgba(99, 102, 241, 0.2)')
+              : 'none',
+            backdropFilter: 'blur(20px)'
+          }}
+        >
+          {/* Message Text */}
+          <div className="text-xs sm:text-sm leading-relaxed break-words">{message.content}</div>
+
+          {/* Image if exists */}
           {message.imageUrl && (
-            <div className="mt-4">
+            <div className="mt-3 sm:mt-4">
               <img
                 src={message.imageUrl}
                 alt="Data visualization"
@@ -281,135 +273,196 @@ const ChatMessage = ({
             </div>
           )}
 
+          {/* Message Actions */}
           <MessageActions
             darkMode={darkMode}
             message={message}
             showSqlToggle={showSqlToggle}
             toggleSqlQuery={toggleSqlQuery}
             generateGraph={generateGraph}
-          />          {showSqlToggle[message.id] && message.sqlQuery && (
+          />          
+
+          {/* SQL Query Display */}
+          {showSqlToggle[message.id] && message.sqlQuery && (
             <div
-              className={`mt-3 p-3 rounded-lg text-xs font-mono transition-all ${
-                darkMode
-                  ? "bg-gray-900 text-gray-300 border border-gray-700"
-                  : "bg-gray-50 text-gray-800 border border-gray-200"
+              className={`mt-3 p-3 sm:p-4 rounded-xl text-xs font-mono transition-all break-all ${
+                darkMode ? "text-blue-200 border" : "text-indigo-800 border"
               }`}
+              style={{
+                background: darkMode 
+                  ? 'rgba(15, 23, 42, 0.6)'
+                  : 'rgba(248, 250, 252, 0.8)',
+                borderColor: darkMode 
+                  ? 'rgba(59, 130, 246, 0.2)'
+                  : 'rgba(99, 102, 241, 0.2)',
+                backdropFilter: 'blur(10px)'
+              }}
             >
               {message.sqlQuery}
             </div>
-          )}{/* Render Table if Data Exists */}
+          )}
+
+          {/* Data Table */}
           {message.data && message.data.length > 0 && (
-            <div className="mt-4">
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table
-                  className={`min-w-full text-sm border-collapse rounded-lg shadow-md ${
-                    darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-                  }`}
-                >
-                  <thead>
-                    <tr>
-                      {Object.keys(message.data[0]).map((key) => (
-                        <th
-                          key={key}
-                          className={`px-4 py-2 border-b font-semibold ${
-                            darkMode ? "border-gray-700" : "border-gray-300"
-                          }`}
-                        >
-                          {key}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentData.map((row, rowIndex) => (
-                      <tr key={startIndex + rowIndex} className={`${
-                        darkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"
-                      }`}>
-                        {Object.values(row).map((value, colIndex) => (
-                          <td
-                            key={colIndex}
-                            className={`px-4 py-2 border-b ${
-                              darkMode ? "border-gray-700" : "border-gray-300"
+            <div className="mt-3 sm:mt-4">
+              <div className="overflow-x-auto -mx-3 sm:-mx-6">
+                <div className="min-w-full inline-block align-middle">
+                  <table
+                    className={`min-w-full text-xs sm:text-sm border-collapse rounded-xl shadow-lg overflow-hidden ${
+                      darkMode ? "text-blue-50" : "text-slate-900"
+                    }`}
+                    style={{
+                      background: darkMode 
+                        ? 'rgba(30, 41, 59, 0.8)'
+                        : 'rgba(255, 255, 255, 0.9)',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                  >
+                    <thead>
+                      <tr>
+                        {Object.keys(message.data[0]).map((key) => (
+                          <th
+                            key={key}
+                            className={`px-2 py-2 sm:px-4 sm:py-3 border-b font-semibold text-left whitespace-nowrap ${
+                              darkMode ? "border-blue-500/20" : "border-indigo-500/20"
                             }`}
+                            style={{
+                              background: darkMode 
+                                ? 'rgba(59, 130, 246, 0.1)'
+                                : 'rgba(99, 102, 241, 0.1)'
+                            }}
                           >
-                            {value !== null ? value.toString() : "—"}
-                          </td>
+                            {key}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {currentData.map((row, rowIndex) => (
+                        <tr key={startIndex + rowIndex} className={`transition-all duration-200 ${
+                          darkMode ? "hover:bg-blue-500/10" : "hover:bg-indigo-500/10"
+                        }`}>
+                          {Object.values(row).map((value, colIndex) => (
+                            <td
+                              key={colIndex}
+                              className={`px-2 py-2 sm:px-4 sm:py-3 border-b whitespace-nowrap ${
+                                darkMode ? "border-blue-500/10" : "border-indigo-500/10"
+                              }`}
+                            >
+                              <div className="max-w-[150px] sm:max-w-[200px] truncate">
+                                {value !== null ? value.toString() : "—"}
+                              </div>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
               
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className={`mt-4 flex items-center justify-between text-sm ${
-                  darkMode ? "text-gray-300" : "text-gray-600"
+                <div className={`mt-3 sm:mt-4 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm gap-2 sm:gap-0 ${
+                  darkMode ? "text-blue-200/70" : "text-indigo-600/70"
                 }`}>
-                  <div>
+                  <div className="text-center sm:text-left">
                     Showing {startIndex + 1}-{endIndex} of {totalRows} results
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={handlePrevPage}
                       disabled={currentPage === 0}
-                      className={`flex items-center px-3 py-1 rounded border transition-all ${
-                        currentPage === 0
-                          ? darkMode 
-                            ? "bg-gray-800 text-gray-600 border-gray-700 cursor-not-allowed"
-                            : "bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed"
-                          : darkMode
-                            ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600"
-                            : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                      className={`flex items-center px-2 py-1 sm:px-4 sm:py-2 rounded-xl border transition-all duration-200 hover:scale-105 text-xs sm:text-sm ${
+                        currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
                       }`}
+                      style={{
+                        background: currentPage === 0 
+                          ? 'rgba(156, 163, 175, 0.3)'
+                          : darkMode
+                            ? 'rgba(59, 130, 246, 0.1)'
+                            : 'rgba(99, 102, 241, 0.1)',
+                        borderColor: darkMode 
+                          ? 'rgba(59, 130, 246, 0.2)'
+                          : 'rgba(99, 102, 241, 0.2)',
+                        backdropFilter: 'blur(10px)'
+                      }}
                     >
-                      <ChevronLeft className="w-4 h-4 mr-1" />
-                      Previous
+                      <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      <span className="hidden sm:inline">Previous</span>
+                      <span className="sm:hidden">Prev</span>
                     </button>
                     
-                    <span className={`px-3 py-1 ${
-                      darkMode ? "text-gray-300" : "text-gray-600"
-                    }`}>
-                      Page {currentPage + 1} of {totalPages}
+                    <span 
+                      className={`px-2 py-1 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm ${darkMode ? "text-blue-200" : "text-indigo-700"}`}
+                      style={{
+                        background: darkMode 
+                          ? 'rgba(59, 130, 246, 0.1)'
+                          : 'rgba(99, 102, 241, 0.1)',
+                        border: darkMode 
+                          ? '1px solid rgba(59, 130, 246, 0.2)'
+                          : '1px solid rgba(99, 102, 241, 0.2)',
+                        backdropFilter: 'blur(10px)'
+                      }}
+                    >
+                      <span className="hidden sm:inline">Page {currentPage + 1} of {totalPages}</span>
+                      <span className="sm:hidden">{currentPage + 1}/{totalPages}</span>
                     </span>
                     
                     <button
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages - 1}
-                      className={`flex items-center px-3 py-1 rounded border transition-all ${
-                        currentPage === totalPages - 1
-                          ? darkMode 
-                            ? "bg-gray-800 text-gray-600 border-gray-700 cursor-not-allowed"
-                            : "bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed"
-                          : darkMode
-                            ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600"
-                            : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                      className={`flex items-center px-2 py-1 sm:px-4 sm:py-2 rounded-xl border transition-all duration-200 hover:scale-105 text-xs sm:text-sm ${
+                        currentPage === totalPages - 1 ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
                       }`}
+                      style={{
+                        background: currentPage === totalPages - 1 
+                          ? 'rgba(156, 163, 175, 0.3)'
+                          : darkMode
+                            ? 'rgba(59, 130, 246, 0.1)'
+                            : 'rgba(99, 102, 241, 0.1)',
+                        borderColor: darkMode 
+                          ? 'rgba(59, 130, 246, 0.2)'
+                          : 'rgba(99, 102, 241, 0.2)',
+                        backdropFilter: 'blur(10px)'
+                      }}
                     >
-                      Next
-                      <ChevronRight className="w-4 h-4 ml-1" />
+                      <span className="hidden sm:inline">Next</span>
+                      <span className="sm:hidden">Next</span>
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                     </button>
                   </div>
                 </div>
               )}
             </div>
-          )}          {/* Graph Dropdown + VegaLite */}
+          )}
+
+          {/* Chart Visualization */}
           {message.data && message.data.length > 0 && (
-            <div className="mt-4">              <div className="flex items-center space-x-2 mb-3">
-                <label className={`text-sm font-medium ${
-                  darkMode ? "text-gray-300" : "text-gray-700"
+            <div className="mt-3 sm:mt-4">              
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-3">
+                <label className={`text-xs sm:text-sm font-medium ${
+                  darkMode ? "text-blue-200" : "text-indigo-700"
                 }`}>
                   Chart Type:
                 </label>
                 <select
                   value={chartType}
                   onChange={(e) => setChartType(e.target.value)}
-                  className={`px-3 py-1 border rounded text-sm transition-all ${
+                  className={`px-2 py-1 sm:px-3 sm:py-2 border rounded-xl text-xs sm:text-sm transition-all focus:ring-2 focus:border-transparent ${
                     darkMode
-                      ? "bg-gray-700 border-gray-600 text-white focus:ring-gray-500"
-                      : "bg-white border-gray-300 text-black focus:ring-gray-400"
-                  } focus:ring-2 focus:border-transparent`}
+                      ? "text-blue-100 focus:ring-blue-500/50"
+                      : "text-indigo-900 focus:ring-indigo-500/50"
+                  }`}
+                  style={{
+                    background: darkMode 
+                      ? 'rgba(30, 41, 59, 0.8)'
+                      : 'rgba(255, 255, 255, 0.9)',
+                    borderColor: darkMode 
+                      ? 'rgba(59, 130, 246, 0.2)'
+                      : 'rgba(99, 102, 241, 0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}
                 >
                   <option value="bar">Bar Chart</option>
                   <option value="line">Line Chart</option>
@@ -417,14 +470,24 @@ const ChatMessage = ({
                   <option value="area">Area Chart</option>
                   <option value="scatter">Scatter Plot</option>
                 </select>
-              </div>{currentSpec && (
-                <div className={`w-full max-w-full overflow-hidden rounded-lg border shadow-lg ${
-                  darkMode 
-                    ? "border-gray-700 bg-gray-800" 
-                    : "border-gray-300 bg-white"
-                }`}>
-                  <div className="p-4">
-                    <div className="w-full min-h-[320px] flex items-center justify-center">
+              </div>
+
+              {/* Chart Display */}
+              {currentSpec && (
+                <div 
+                  className="w-full max-w-full overflow-hidden rounded-2xl border shadow-xl"
+                  style={{
+                    borderColor: darkMode 
+                      ? 'rgba(59, 130, 246, 0.2)'
+                      : 'rgba(99, 102, 241, 0.2)',
+                    background: darkMode 
+                      ? 'rgba(30, 41, 59, 0.8)'
+                      : 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(20px)'
+                  }}
+                >
+                  <div className="p-3 sm:p-6">
+                    <div className="w-full min-h-[250px] sm:min-h-[320px] flex items-center justify-center">
                       <VegaLite 
                         spec={currentSpec} 
                         actions={false}
@@ -439,24 +502,34 @@ const ChatMessage = ({
               )}
               
               {!currentSpec && message.data && message.data.length > 0 && (
-                <div className={`w-full p-4 text-center rounded-lg border ${
-                  darkMode 
-                    ? "border-gray-700 bg-gray-800 text-gray-300" 
-                    : "border-gray-300 bg-gray-50 text-gray-600"
-                }`}>
+                <div 
+                  className={`w-full p-3 sm:p-4 text-center rounded-xl border text-xs sm:text-sm ${
+                    darkMode ? "text-blue-300" : "text-indigo-600"
+                  }`}
+                  style={{
+                    borderColor: darkMode 
+                      ? 'rgba(59, 130, 246, 0.2)'
+                      : 'rgba(99, 102, 241, 0.2)',
+                    background: darkMode 
+                      ? 'rgba(30, 41, 59, 0.6)'
+                      : 'rgba(248, 250, 252, 0.8)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
                   Unable to generate chart for the selected data and chart type.
                 </div>
               )}
             </div>
-          )}          <div
+          )}          
+
+          {/* Timestamp */}
+          <div
             className={`text-xs mt-2 ${
               message.type === "user"
-                ? darkMode
-                  ? "text-black"
-                  : "text-white"
+                ? "text-white/70"
                 : darkMode
-                ? "text-gray-400"
-                : "text-gray-500"
+                ? "text-blue-200/60"
+                : "text-indigo-600/60"
             }`}
           >
             {formatTimestamp(message.timestamp)}

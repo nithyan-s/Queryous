@@ -391,40 +391,60 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
   }
 
   return (
-    <Box m={isEmbedded ? "10px" : "20px"} data-dashboard-container="true">
+    <Box m={isEmbedded ? "10px" : { xs: "10px", sm: "15px", md: "20px" }} data-dashboard-container="true">
       {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box 
+        display="flex" 
+        flexDirection={{ xs: "column", sm: "row" }}
+        justifyContent="space-between" 
+        alignItems={{ xs: "flex-start", sm: "center" }}
+        gap={{ xs: 2, sm: 0 }}
+        mb={{ xs: 2, sm: 0 }}
+      >
         <Header title="ANALYTICS DASHBOARD" subtitle={`${currentTitle} - ${currentData.length} records analyzed`} />
 
-        <Box display="flex" gap="10px">
+        <Box 
+          display="flex" 
+          flexDirection={{ xs: "column", sm: "row" }}
+          gap={{ xs: 1, sm: 2 }}
+          width={{ xs: "100%", sm: "auto" }}
+        >
           {!isEmbedded && (
             <>
               <Button
                 onClick={handleEmbed}
+                fullWidth={window.innerWidth < 600}
                 sx={{
                   backgroundColor: colors.greenAccent[700],
                   color: colors.grey[100],
-                  fontSize: "14px",
+                  fontSize: { xs: "12px", sm: "14px" },
                   fontWeight: "bold",
-                  padding: "10px 20px",
+                  padding: { xs: "8px 16px", sm: "10px 20px" },
                 }}
               >
                 <ShareIcon sx={{ mr: "10px" }} />
-                Embed Dashboard
+                <Box component="span" display={{ xs: "none", sm: "inline" }}>Embed Dashboard</Box>
+                <Box component="span" display={{ xs: "inline", sm: "none" }}>Embed</Box>
               </Button>
               <Button
                 onClick={handleExportPdf}
                 disabled={isLoading}
+                fullWidth={window.innerWidth < 600}
                 sx={{
                   backgroundColor: colors.blueAccent[700],
                   color: colors.grey[100],
-                  fontSize: "14px",
+                  fontSize: { xs: "12px", sm: "14px" },
                   fontWeight: "bold",
-                  padding: "10px 20px",
+                  padding: { xs: "8px 16px", sm: "10px 20px" },
                 }}
               >
                 <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-                {isLoading ? 'Capturing Dashboard...' : 'Export as PDF'}
+                <Box component="span" display={{ xs: "none", sm: "inline" }}>
+                  {isLoading ? 'Capturing Dashboard...' : 'Export as PDF'}
+                </Box>
+                <Box component="span" display={{ xs: "inline", sm: "none" }}>
+                  {isLoading ? 'Capturing...' : 'PDF'}
+                </Box>
               </Button>
             </>
           )}
@@ -434,17 +454,22 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
       {/* GRID & CHARTS */}
       <Box
         display="grid"
-        gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
-        gap="20px"
+        gridTemplateColumns={{ 
+          xs: "1fr", 
+          sm: "repeat(6, 1fr)", 
+          md: "repeat(12, 1fr)" 
+        }}
+        gridAutoRows={{ xs: "120px", sm: "130px", md: "140px" }}
+        gap={{ xs: "10px", sm: "15px", md: "20px" }}
       >
         {/* ROW 1 - KPI CARDS */}
         <Box
-          gridColumn="span 3"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 3" }}
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px"
         >
           <StatBox
             title={currentData.length.toString()}
@@ -453,18 +478,19 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             increase="+14%"
             icon={
               <AssessmentIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: { xs: "20px", sm: "24px", md: "26px" } }}
               />
             }
           />
         </Box>
         
         <Box
-          gridColumn="span 3"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 3" }}
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px"
         >
           <StatBox
             title={dataKeys.length.toString()}
@@ -473,18 +499,19 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             increase="+8%"
             icon={
               <EmailIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: { xs: "20px", sm: "24px", md: "26px" } }}
               />
             }
           />
         </Box>
         
         <Box
-          gridColumn="span 3"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 3" }}
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px"
         >
           <StatBox
             title={kpiData.sum}
@@ -493,18 +520,19 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             increase="+23%"
             icon={
               <PointOfSaleIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: { xs: "20px", sm: "24px", md: "26px" } }}
               />
             }
           />
         </Box>
         
         <Box
-          gridColumn="span 3"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 3" }}
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px"
         >
           <StatBox
             title={kpiData.avg}
@@ -513,7 +541,7 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             increase="+12%"
             icon={
               <TrendingUpIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: { xs: "20px", sm: "24px", md: "26px" } }}
               />
             }
           />
@@ -521,29 +549,31 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
 
         {/* ROW 2 - MAIN TREND CHART */}
         <Box
-          gridColumn="span 8"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 6", md: "span 8" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
           overflow="hidden"
         >
           <Box
-            mt="25px"
-            p="0 30px"
+            mt={{ xs: "15px", sm: "20px", md: "25px" }}
+            p={{ xs: "0 15px", sm: "0 20px", md: "0 30px" }}
             display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
-            alignItems="center"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            gap={{ xs: 1, sm: 0 }}
           >
             <Box>
               <Typography
-                variant="h5"
+                variant={{ xs: "h6", sm: "h5" }}
                 fontWeight="600"
                 color={colors.grey[100]}
               >
                 Data Trends
               </Typography>
               <Typography
-                variant="h3"
+                variant={{ xs: "h4", sm: "h3" }}
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
@@ -553,21 +583,26 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             <Box>
               <IconButton onClick={handleExportTableCsv}>
                 <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+                  sx={{ fontSize: { xs: "20px", sm: "24px", md: "26px" }, color: colors.greenAccent[500] }}
                 />
               </IconButton>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0" p="10px">
+          <Box 
+            height={{ xs: "180px", sm: "220px", md: "250px" }}
+            m={{ xs: "-10px 0 0 0", sm: "-15px 0 0 0", md: "-20px 0 0 0" }}
+            p={{ xs: "5px", sm: "8px", md: "10px" }}
+          >
             <LineChart data={currentData} isDashboard={true} />
           </Box>
         </Box>
 
         {/* ROW 2 - DATA PREVIEW */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 6", md: "span 4" }}
+          gridRow={{ xs: "span 2", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
+          borderRadius="10px"
           overflow="auto"
         >
           <Box
@@ -575,30 +610,42 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             justifyContent="space-between"
             alignItems="center"
             borderBottom={`4px solid ${colors.primary[500]}`}
-            p="15px"
+            p={{ xs: "10px", sm: "12px", md: "15px" }}
           >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+            <Typography 
+              color={colors.grey[100]} 
+              variant={{ xs: "h6", sm: "h5" }}
+              fontWeight="600"
+            >
               Data Preview
             </Typography>
           </Box>
-          {paginatedData.slice(0, 6).map((row, i) => (
+          {paginatedData.slice(0, { xs: 4, sm: 5, md: 6 }[window.innerWidth < 600 ? 'xs' : window.innerWidth < 900 ? 'sm' : 'md']).map((row, i) => (
             <Box
               key={i}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
               borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
+              p={{ xs: "10px", sm: "12px", md: "15px" }}
             >
-              <Box>
+              <Box flex={1}>
                 <Typography
                   color={colors.greenAccent[500]}
-                  variant="h5"
+                  variant={{ xs: "h6", sm: "h5" }}
                   fontWeight="600"
                 >
                   #{i + 1}
                 </Typography>
-                <Typography color={colors.grey[100]} fontSize="12px">
+                <Typography 
+                  color={colors.grey[100]} 
+                  fontSize={{ xs: "10px", sm: "11px", md: "12px" }}
+                  sx={{ 
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}
+                >
                   {dataKeys.slice(0, 2).map(key => 
                     `${key}: ${row[key] || 'N/A'}`
                   ).join(' | ')}
@@ -606,9 +653,11 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
               </Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
-                p="5px 10px"
+                p={{ xs: "3px 6px", sm: "4px 8px", md: "5px 10px" }}
                 borderRadius="4px"
                 color={colors.primary[900]}
+                fontSize={{ xs: "10px", sm: "11px", md: "12px" }}
+                minWidth="fit-content"
               >
                 Row {i + 1}
               </Box>
@@ -618,104 +667,127 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
 
         {/* ROW 3 - PROGRESS CIRCLE */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 2", md: "span 4" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
-          p="30px"
+          p={{ xs: "15px", sm: "20px", md: "30px" }}
         >
           <Box
             display="flex"
             flexDirection="column"
             alignItems="center"
-            mt="25px"
+            mt={{ xs: "10px", sm: "15px", md: "25px" }}
           >
-            <ProgressCircle size="125" progress="0.85" />
+            <ProgressCircle size={{ xs: "80", sm: "100", md: "125" }[window.innerWidth < 600 ? 'xs' : window.innerWidth < 900 ? 'sm' : 'md']} progress="0.85" />
             <Typography
-              variant="h5"
+              variant={{ xs: "h6", sm: "h5" }}
               color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
+              sx={{ mt: { xs: "8px", sm: "12px", md: "15px" } }}
             >
               85% Data Quality
             </Typography>
-            <Typography color={colors.grey[300]} textAlign="center">
+            <Typography 
+              color={colors.grey[300]} 
+              textAlign="center"
+              fontSize={{ xs: "12px", sm: "14px", md: "16px" }}
+            >
               {currentData.length} records analyzed
             </Typography>
           </Box>
         </Box>
         
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 2", md: "span 4" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
         >
-          <Box height="280px" mt="20px">
+          <Box height={{ xs: "200px", sm: "240px", md: "280px" }} mt={{ xs: "10px", sm: "15px", md: "20px" }}>
             <BarChart data={currentData} isDashboard={true} />
           </Box>
         </Box>
         
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 2", md: "span 4" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
-          padding="30px"
+          padding={{ xs: "15px", sm: "20px", md: "30px" }}
         >
-          <Box height="200px">
+          <Box height={{ xs: "150px", sm: "180px", md: "200px" }}>
             <PieChart data={currentData} isDashboard={true} />
           </Box>
         </Box>
 
         {/* ROW 4 - AREA AND SCATTER CHARTS */}
         <Box
-          gridColumn="span 6"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 6" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
         >
-          <Box height="280px" mt="20px">
+          <Box height={{ xs: "200px", sm: "240px", md: "280px" }} mt={{ xs: "10px", sm: "15px", md: "20px" }}>
             <AreaChart data={currentData} isDashboard={true} />
           </Box>
         </Box>
 
         <Box
-          gridColumn="span 6"
-          gridRow="span 2"
+          gridColumn={{ xs: "span 1", sm: "span 3", md: "span 6" }}
+          gridRow={{ xs: "span 1", sm: "span 2", md: "span 2" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
         >
-          <Box height="280px" mt="20px">
+          <Box height={{ xs: "200px", sm: "240px", md: "280px" }} mt={{ xs: "10px", sm: "15px", md: "20px" }}>
             <ScatterChart data={currentData} isDashboard={true} />
           </Box>
         </Box>
 
         {/* ROW 6 - DATA TABLE */}
         <Box
-          gridColumn="span 12"
-          gridRow="span 3"
+          gridColumn={{ xs: "span 1", sm: "span 6", md: "span 12" }}
+          gridRow={{ xs: "span 2", sm: "span 3", md: "span 3" }}
           backgroundColor={colors.primary[400]}
           borderRadius="10px"
-          p="20px"
+          p={{ xs: "10px", sm: "15px", md: "20px" }}
         >
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb="20px">
-            <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
+          <Box 
+            display="flex" 
+            flexDirection={{ xs: "column", sm: "row" }}
+            justifyContent="space-between" 
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            mb={{ xs: "15px", sm: "20px" }}
+            gap={{ xs: 1, sm: 0 }}
+          >
+            <Typography 
+              variant={{ xs: "h6", sm: "h5" }}
+              fontWeight="600" 
+              color={colors.grey[100]}
+            >
               Complete Data Table
             </Typography>
             <IconButton 
               onClick={handleExportTableCsv}
               disabled={isLoading}
-              sx={{ color: colors.grey[100] }}
+              sx={{ 
+                color: colors.grey[100],
+                alignSelf: { xs: "flex-end", sm: "center" }
+              }}
             >
               <DownloadIcon />
             </IconButton>
           </Box>
           
-          <TableContainer component={Paper} sx={{ 
-            backgroundColor: colors.primary[400],
-            maxHeight: "300px" 
-          }}>
-            <Table stickyHeader>
+          <TableContainer 
+            component={Paper} 
+            sx={{ 
+              backgroundColor: colors.primary[400],
+              maxHeight: { xs: "250px", sm: "280px", md: "300px" },
+              borderRadius: "8px",
+              overflow: "auto"
+            }}
+          >
+            <Table stickyHeader size={{ xs: "small", sm: "medium" }[window.innerWidth < 600 ? 'xs' : 'sm']}>
               <TableHead>
                 <TableRow>
                   {dataKeys.map((column) => (
@@ -724,7 +796,9 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
                       sx={{ 
                         backgroundColor: colors.blueAccent[700],
                         color: colors.grey[100],
-                        fontWeight: "bold"
+                        fontWeight: "bold",
+                        fontSize: { xs: "12px", sm: "14px", md: "16px" },
+                        padding: { xs: "8px", sm: "12px", md: "16px" }
                       }}
                     >
                       {column}
@@ -745,7 +819,13 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
                         key={`${index}-${column}`}
                         sx={{ 
                           color: colors.grey[100],
-                          borderBottom: `1px solid ${colors.grey[700]}`
+                          borderBottom: `1px solid ${colors.grey[700]}`,
+                          fontSize: { xs: "11px", sm: "13px", md: "14px" },
+                          padding: { xs: "6px", sm: "10px", md: "16px" },
+                          maxWidth: { xs: "100px", sm: "150px", md: "200px" },
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap"
                         }}
                       >
                         {typeof row[column] === 'number' 
@@ -760,7 +840,7 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
           </TableContainer>
           
           <TablePagination
-            rowsPerPageOptions={[10, 25, 50]}
+            rowsPerPageOptions={window.innerWidth < 600 ? [5, 10] : [10, 25, 50]}
             component="div"
             count={currentData.length}
             rowsPerPage={rowsPerPage}
@@ -770,7 +850,12 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             sx={{ 
               color: colors.grey[100],
               '.MuiTablePagination-select': { color: colors.grey[100] },
-              '.MuiTablePagination-selectIcon': { color: colors.grey[100] }
+              '.MuiTablePagination-selectIcon': { color: colors.grey[100] },
+              '.MuiTablePagination-toolbar': {
+                minHeight: { xs: "52px", sm: "64px" },
+                paddingLeft: { xs: "8px", sm: "16px" },
+                paddingRight: { xs: "8px", sm: "16px" }
+              }
             }}
           />
         </Box>

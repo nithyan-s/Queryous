@@ -7,6 +7,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
+import Landing from "./pages/Landing.jsx";
+import Auth from "./pages/Auth.jsx";
 import Chat from "./pages/Chat.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import Notification from "./components/Notification.jsx";
@@ -564,8 +566,15 @@ const App = () => {
         <CssBaseline />
         <div className="min-h-screen">
           <Routes>
+            {/* Landing Page Route */}
+            <Route path="/" element={<Landing />} />
+            
+            {/* Authentication Route */}
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Chat Application Route */}
             <Route
-              path="/"
+              path="/chat"
               element={
                 <Chat
                   lastPrompt={lastPrompt} 
