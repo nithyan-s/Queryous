@@ -57,8 +57,8 @@ from utils import (
 
 # FASTAPI APPLICATION SETUP
 
-# Enable vegafusion for better Altair performance
-alt.data_transformers.enable("vegafusion")
+# Enable json data transformer for Altair (instead of vegafusion to avoid dependency issues)
+alt.data_transformers.enable("json")
 
 # Initialize FastAPI application with metadata
 app = FastAPI(

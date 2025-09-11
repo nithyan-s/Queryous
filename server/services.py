@@ -21,7 +21,7 @@ def query_llm(user_prompt: str, system_prompt: str, schema_prompt: str, llm_api_
     }
     
     data = {
-        "model": "llama3-70b-8192",
+        "model": "llama-3.3-70b-versatile",
         "messages": [
             {
                 "role": "system",
@@ -46,9 +46,13 @@ def query_llm(user_prompt: str, system_prompt: str, schema_prompt: str, llm_api_
         return result["choices"][0]["message"]["content"].strip()
     except requests.exceptions.RequestException as e:
         print(f"Error calling Groq API: {e}")
+        if 'response' in locals():
+            print(f"Response content: {response.text}")
         raise HTTPException(status_code=500, detail=f"Failed to communicate with LLM: {e}")
     except KeyError as e:
         print(f"Unexpected API response format: {e}")
+        if 'result' in locals():
+            print(f"Full response: {result}")
         raise HTTPException(status_code=500, detail="Invalid response from LLM service")
 
 
@@ -61,19 +65,15 @@ def summarize_results(query, sql_query, result_data, llm_api_url, llm_api_key, t
         Please provide a {"clear, concise summary about a sentence." if task == "summary" else "short title (5-8 words)"} of these results.
     """
     
-    # Azure OpenAI configuration
-    model_name = "gpt-4.1"
-    deployment = "gpt-4.1-propel-exp"
-    api_version = "2024-12-01-preview"
+    # Groq API configuration for Llama model
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {llm_api_key}"
+    }
     
-    client = AzureOpenAI(
-        api_version=api_version,
-        azure_endpoint=llm_api_url,  # Using the endpoint from parameters
-        api_key=llm_api_key,
-    )
-    
-    response = client.chat.completions.create(
-        messages=[
+    data = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
             {
                 "role": "system",
                 "content": "You are a helpful assistant that provides clear summaries of data analysis results.",
@@ -83,15 +83,24 @@ def summarize_results(query, sql_query, result_data, llm_api_url, llm_api_key, t
                 "content": prompt,
             }
         ],
-        max_completion_tokens=246,
-        temperature=0.8,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        model=deployment
-    )
+        "max_tokens": 246,
+        "temperature": 0.8,
+        "top_p": 1.0,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0,
+    }
     
-    return response.choices[0].message.content.strip()
+    try:
+        response = requests.post(llm_api_url, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result["choices"][0]["message"]["content"].strip()
+    except requests.exceptions.RequestException as e:
+        print(f"Error calling Groq API: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to communicate with LLM: {e}")
+    except KeyError as e:
+        print(f"Unexpected API response format: {e}")
+        raise HTTPException(status_code=500, detail="Invalid response from LLM service")
 
 
 def execute_query(sql_query: str, db_engine) -> pd.DataFrame:
@@ -107,31 +116,39 @@ def execute_query(sql_query: str, db_engine) -> pd.DataFrame:
 
 
 def generate_auto_chart(df):
-    if df.empty:
+    try:
+        if df.empty:
+            return None
+        
+        if df.shape[1] == 1:
+            counts = df[df.columns[0]].value_counts().reset_index()
+            counts.columns = [df.columns[0], 'count']
+            chart = alt.Chart(counts).mark_bar().encode(
+                x=alt.X(df.columns[0], type='nominal'),
+                y=alt.Y('count', type='quantitative')
+            )
+        elif 'date' in df.columns or 'time' in df.columns:
+            time_col = 'date' if 'date' in df.columns else 'time'
+            chart = alt.Chart(df).mark_line().encode(
+                x=alt.X(f'{time_col}:T'),
+                y=alt.Y(df.columns[1], type='quantitative')
+            )
+        elif df.select_dtypes(include=['object']).shape[1] > 0 and df.select_dtypes(include=['number']).shape[1] > 0:
+            cat_col = df.select_dtypes(include=['object']).columns[0]
+            num_col = df.select_dtypes(include=['number']).columns[0]
+            chart = alt.Chart(df).mark_bar().encode(
+                x=alt.X(cat_col, type='nominal'),
+                y=alt.Y(num_col, type='quantitative')
+            )
+        else:
+            chart = alt.Chart(df).mark_point().encode(
+                x=alt.X(df.columns[0], type='quantitative'),
+                y=alt.Y(df.columns[1], type='quantitative')
+            )
+        
+        return chart.to_json(format="vega")
+        
+    except Exception as e:
+        print(f"Error generating chart: {e}")
+        print("Returning None for visualization due to chart generation error")
         return None
-    if df.shape[1] == 1:
-        counts = df[df.columns[0]].value_counts().reset_index()
-        counts.columns = [df.columns[0], 'count']
-        chart = alt.Chart(counts).mark_bar().encode(
-            x=alt.X(df.columns[0], type='nominal'),
-            y=alt.Y('count', type='quantitative')
-        )
-    elif 'date' in df.columns or 'time' in df.columns:
-        time_col = 'date' if 'date' in df.columns else 'time'
-        chart = alt.Chart(df).mark_line().encode(
-            x=alt.X(f'{time_col}:T'),
-            y=alt.Y(df.columns[1], type='quantitative')
-        )
-    elif df.select_dtypes(include=['object']).shape[1] > 0 and df.select_dtypes(include=['number']).shape[1] > 0:
-        cat_col = df.select_dtypes(include=['object']).columns[0]
-        num_col = df.select_dtypes(include=['number']).columns[0]
-        chart = alt.Chart(df).mark_bar().encode(
-            x=alt.X(cat_col, type='nominal'),
-            y=alt.Y(num_col, type='quantitative')
-        )
-    else:
-        chart = alt.Chart(df).mark_point().encode(
-            x=alt.X(df.columns[0], type='quantitative'),
-            y=alt.Y(df.columns[1], type='quantitative')
-        )
-    return chart.to_json(format = "vega")
