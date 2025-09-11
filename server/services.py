@@ -8,26 +8,21 @@ import altair as alt
 import time
 import traceback
 from fastapi import HTTPException
-from openai import AzureOpenAI
 
 # LLM Communication
 
 def query_llm(user_prompt: str, system_prompt: str, schema_prompt: str, llm_api_url: str, llm_api_key: str) -> str:
     full_prompt = f"{schema_prompt}\n\nUser question: {user_prompt}"
     
-    # Azure OpenAI configuration
-    model_name = "gpt-4.1"
-    deployment = "gpt-4.1-propel-exp"
-    api_version = "2024-12-01-preview"
+    # Groq API configuration for Llama model
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {llm_api_key}"
+    }
     
-    client = AzureOpenAI(
-        api_version=api_version,
-        azure_endpoint=llm_api_url,  # Using the endpoint from parameters
-        api_key=llm_api_key,
-    )
-    
-    response = client.chat.completions.create(
-        messages=[
+    data = {
+        "model": "llama3-70b-8192",
+        "messages": [
             {
                 "role": "system",
                 "content": system_prompt,
@@ -37,15 +32,24 @@ def query_llm(user_prompt: str, system_prompt: str, schema_prompt: str, llm_api_
                 "content": full_prompt,
             }
         ],
-        max_completion_tokens=512,  # Shorter responses for just SQL
-        temperature=0.1,  # Very low temperature for precise SQL generation
-        top_p=0.95,  # Higher topP for better quality
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        model=deployment
-    )
+        "max_tokens": 512,  # Shorter responses for just SQL
+        "temperature": 0.1,  # Very low temperature for precise SQL generation
+        "top_p": 0.95,  # Higher topP for better quality
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0,
+    }
     
-    return response.choices[0].message.content.strip()
+    try:
+        response = requests.post(llm_api_url, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result["choices"][0]["message"]["content"].strip()
+    except requests.exceptions.RequestException as e:
+        print(f"Error calling Groq API: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to communicate with LLM: {e}")
+    except KeyError as e:
+        print(f"Unexpected API response format: {e}")
+        raise HTTPException(status_code=500, detail="Invalid response from LLM service")
 
 
 def summarize_results(query, sql_query, result_data, llm_api_url, llm_api_key, task="summary"):
