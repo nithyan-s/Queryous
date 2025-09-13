@@ -1,5 +1,5 @@
-# Use Python 3.12 slim image
-FROM python:3.12-slim
+# Use Python 3.11 slim image (pandas compatible)
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -29,5 +29,5 @@ COPY . .
 # Expose port
 EXPOSE 8001
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+# Run the application on port from environment variable
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001}"]
