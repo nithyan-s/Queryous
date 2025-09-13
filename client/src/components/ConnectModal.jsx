@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Database, X, Upload } from 'lucide-react';
 import { GrMysql } from 'react-icons/gr';
 import { BiLogoPostgresql } from 'react-icons/bi';
+import { useAuth } from '../contexts/AuthContext';
 
 const ConnectModal = ({
   darkMode,
@@ -19,7 +20,59 @@ const ConnectModal = ({
   handleClearCsv,
   showNotification
 }) => {
+  const { user, storeDbCredentials, getDbCredentials } = useAuth();
   const [activeTab, setActiveTab] = useState('database');
+  
+  // Load saved credentials when modal opens and database tab is active
+  useEffect(() => {
+    if (showConnectModal && user && activeTab === 'database') {
+      loadSavedCredentials();
+    }
+  }, [showConnectModal, user, activeTab]);
+  
+  const loadSavedCredentials = async () => {
+    try {
+      const result = await getDbCredentials();
+      if (result.success && result.data) {
+        // Convert backend schema to frontend schema
+        setDbCredentials({
+          type: 'mysql', // default
+          url: `${result.data.host}:${result.data.port}`,
+          name: result.data.db_name,
+          username: result.data.user,
+          password: result.data.password
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load saved credentials:', error);
+    }
+  };
+  
+  const handleConnect = async () => {
+    // Only store DB credentials if we're on the database tab
+    if (user && activeTab === 'database') {
+      // Store credentials using auth system before connecting
+      try {
+        const credentials = {
+          host: dbCredentials.url.split(':')[0] || 'localhost',
+          port: parseInt(dbCredentials.url.split(':')[1]) || 3306,
+          user: dbCredentials.username,
+          password: dbCredentials.password,
+          db_name: dbCredentials.name
+        };
+        
+        const result = await storeDbCredentials(credentials);
+        if (result.success) {
+          showNotification && showNotification('success', 'Credentials Saved', 'Database credentials stored securely');
+        }
+      } catch (error) {
+        console.error('Failed to store credentials:', error);
+      }
+    }
+    
+    // Call the original connect function
+    handleConnectDb();
+  };
   const [selectedFile, setSelectedFile] = useState(null);
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -148,6 +201,13 @@ const ConnectModal = ({
                   </div>
 
                   {/* Form Fields */}
+                  {user && (
+                    <div className={`mb-3 p-3 rounded-lg text-sm ${
+                      darkMode ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20' : 'bg-blue-50 text-blue-700 border border-blue-200'
+                    }`}>
+                      💾 Credentials will be saved securely to your account
+                    </div>
+                  )}
                   <div className="space-y-3">
                     {['url', 'name', 'username', 'password'].map((field) => {
                       const labels = {
@@ -209,7 +269,7 @@ const ConnectModal = ({
                       </button>
                     ) : (
                       <button
-                        onClick={handleConnectDb}
+                        onClick={handleConnect}
                         disabled={isConnecting}
                         className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all disabled:opacity-50 ${
                           darkMode

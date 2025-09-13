@@ -1,256 +1,196 @@
-# Introduction
+# Queryous - AI-Powered Data Analytics Platform
 
 A full-stack data analytics chatbot with real-time dashboard visualization built using **React** and **FastAPI**, designed for enterprise-level data analysis and reporting.
 
-## Overview
+## 🚀 Features
 
-This application offers a comprehensive analytics platform featuring:
+- **JWT Authentication System** - Secure user registration and login
+- **Database Connection Management** - Connect to MySQL, PostgreSQL, SQL Server
+- **AI-Powered SQL Generation** - Natural language to SQL queries
+- **Interactive Data Visualizations** - Charts powered by Vega-Lite v6
+- **Real-time Chat Interface** - Conversational data analysis
+- **Session History** - Track and revisit past queries
+- **Responsive Dashboard** - Material-UI components
 
-- Database connection and query feature
-- Interactive data visualizations
-- Real-time chart generation
-- Multiple chart types: bar, line, pie
-
-## Architecture
+## 🏗️ Architecture
 
 ```
-DashboardPlatform/
-├── client/          # React frontend application
-├── server/          # FastAPI backend server
-└── README.md        # This file
+Queryous/
+├── client/          # React frontend (Vite + MUI)
+├── server/          # FastAPI backend (JWT + Groq)
+└── docker-compose.yml
 ```
 
-# Getting Started
+## 🚀 Quick Start
 
+### **Option 1: Docker (Recommended)**
+```bash
+git clone <your-repo-url>
+cd Queryous
+docker-compose up --build
+```
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8001
+- API Docs: http://localhost:8001/docs
 
-## 1. Installation
+### **Option 2: Manual Setup**
+```bash
+# Backend
+cd server
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with your API keys
+uvicorn main:app --reload
 
-### Option 1: Docker Setup (Recommended)
-1. **Install Docker Desktop**
-   - Download from [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-   - Install and start Docker Desktop
-   - Ensure Docker is running (whale icon in system tray)
+# Frontend (new terminal)
+cd client
+npm install
+npm run dev
+```
 
-2. **Clone and Run**
-   ```bash
-   git clone <repository-url>
-   cd DashboardPlatform
-   docker-compose up --build
-   ```
+## 🔧 Configuration
 
-### Option 2: Manual Setup
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd DashboardPlatform
-   ```
+Create `server/.env` from `.env.example`:
+```bash
+# JWT Secret (change in production)
+JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters
 
-2. **Backend Setup**
-   ```bash
-   cd server
-   pip install -r requirements.txt
-   ```
+# LLM Configuration
+LLM_API_URL=https://api.groq.com/openai/v1/chat/completions
+LLM_API_KEY=your_groq_api_key_here
 
-3. **Frontend Setup**
-   ```bash
-   cd client
-   npm install
-   ```
+# Frontend URL (for CORS)
+FRONTEND_URL=http://localhost:5173
+```
 
-## 2. Software Dependencies
+## 📊 Tech Stack
 
-### For Docker Deployment (Recommended)
-- Docker Desktop 4.0+
-- Docker Compose (included with Docker Desktop)
+### **Frontend**
+- React 18 + Vite
+- Material-UI (MUI)
+- Vega-Lite for charts
+- JWT Authentication
 
-### For Manual Development Setup
-- Node.js 18+ and npm
-- Python 3.8+
-- Virtual environment (venv or conda)
+### **Backend**
+- FastAPI
+- JWT with bcrypt
+- Groq API integration
+- Database connections
 
-# Build and Deploy
+## 🔐 Authentication
 
-## 1. Project Structure
+### **JWT-Based System**
+- User registration/login
+- Secure password hashing
+- Token-based authentication
+- Automatic logout on expiry
 
-### Client Structure
+### **API Endpoints**
+- `POST /auth/signup` - Register new user
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout
+- `POST /auth/store-db-credentials` - Store database credentials
+- `GET /auth/get-db-credentials` - Retrieve database credentials
+
+## 📈 Data Visualization
+
+### **Chart Types**
+- Bar Charts
+- Line Charts
+- Area Charts
+- Pie Charts
+- Scatter Plots
+- Progress Circles
+
+### **Features**
+- Interactive tooltips
+- Responsive design
+- Export capabilities
+- Real-time updates
+
+## 🚀 Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
+### **Production Platforms**
+- **Frontend**: Vercel
+- **Backend**: Render
+- **Database**: Your choice (MySQL, PostgreSQL, etc.)
+
+## 🧪 Development
+
+### **Project Structure**
 ```
 client/
-├── public/          # Static assets
 ├── src/
-│   ├── components/  # Reusable React components
-│   │   ├── charts/  # Chart components (Bar, Line, Pie)
-│   │   └── ...      # Other UI components
-│   ├── pages/       # Page-level components
-│   ├── hooks/       # Custom React hooks
-│   ├── styles/      # Styling and animations
-│   └── utils/       # Utility functions
-├── package.json     # Dependencies and scripts
-├── vite.config.js   # Vite configuration
-├── Dockerfile       # Docker configuration for frontend
-└── nginx.conf       # Nginx configuration
-```
+│   ├── components/     # Reusable components
+│   │   ├── charts/     # Chart components
+│   │   └── ...
+│   ├── pages/          # Page components
+│   ├── contexts/       # React contexts
+│   └── utils/          # Utilities
+└── package.json
 
-### Server Structure
-```
 server/
-├── main.py          # FastAPI application entry point
-├── services.py      # Business logic and services
-├── db.py           # Database configuration and models
-├── utils.py        # Utility functions
-├── requirements.txt # Python dependencies
-└── Dockerfile       # Docker configuration for backend
+├── main.py            # FastAPI app
+├── auth_routes.py     # Authentication routes
+├── auth_service.py    # Authentication logic
+├── services.py        # Business logic
+├── db.py             # Database utilities
+└── requirements.txt
 ```
 
-## 2. Docker Deployment (Recommended)
+### **Available Scripts**
 
-### Prerequisites
-- Docker Desktop installed and running
-- Docker Compose (included with Docker Desktop)
-
-### Quick Start with Docker
+#### Frontend
 ```bash
-# Navigate to project root
-cd DashboardPlatform
-
-# Build and start all services
-docker-compose up --build
+npm run dev         # Development server
+npm run build       # Production build
+npm run preview     # Preview build
+npm run test        # Run tests
 ```
 
-### Access the Application
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8001
-- **API Documentation**: http://localhost:8001/docs
-- **Health Check**: http://localhost:8001/health
-
-### Docker Commands
-
-#### Start Services
+#### Backend
 ```bash
-# Start in foreground (with logs)
-docker-compose up --build
-
-# Start in background (detached mode)
-docker-compose up -d --build
-
-# Start specific service
-docker-compose up backend
-docker-compose up frontend
+uvicorn main:app --reload    # Development server
+python -m pytest            # Run tests
 ```
 
-#### Stop Services
-```bash
-# Stop all services
-docker-compose down
+## 🔒 Security Features
 
-# Stop and remove volumes
-docker-compose down -v
+- ✅ JWT token authentication
+- ✅ Password hashing with bcrypt
+- ✅ CORS configuration
+- ✅ Input validation
+- ✅ Environment variable protection
 
-# Stop and remove images
-docker-compose down --rmi all
-```
+## 🐛 Troubleshooting
 
-#### View Logs
-```bash
-# View all logs
-docker-compose logs
+### **Common Issues**
 
-# View specific service logs
-docker-compose logs backend
-docker-compose logs frontend
+1. **Charts not rendering**: Ensure Vega-Lite v6 compatibility
+2. **Authentication errors**: Check JWT secret configuration
+3. **Database connection**: Verify credentials and network access
+4. **CORS errors**: Update FRONTEND_URL in backend .env
 
-# Follow logs in real-time
-docker-compose logs -f
-```
+### **Debug Mode**
+Set `ENVIRONMENT=development` in `.env` for detailed error logging.
 
-#### Rebuild Services
-```bash
-# Rebuild all services
-docker-compose build
+## 📝 License
 
-# Rebuild specific service
-docker-compose build backend
-docker-compose build frontend
+This project is open source and available under the [MIT License](LICENSE).
 
-# Force rebuild (no cache)
-docker-compose build --no-cache
-```
+## 🤝 Contributing
 
-### Troubleshooting
-```bash
-# Check service status
-docker-compose ps
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-# Access container shell
-docker-compose exec backend bash
-docker-compose exec frontend sh
+---
 
-# View container resources
-docker stats
-
-# Clean up unused Docker resources
-docker system prune
-```
-
-## 3. Development Setup (Alternative)
-
-### Manual Setup Without Docker
-
-1. **Start the backend server**
-   ```bash
-   cd server
-   # Create virtual environment
-   python -m venv venv
-   venv\Scripts\activate       # Windows
-   # source venv/bin/activate   # macOS/Linux
-   
-   # Install dependencies
-   pip install -r requirements.txt
-   
-   # Start server
-   uvicorn main:app --reload --port 8001
-   ```
-
-2. **Start the frontend development server**
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-
-## 4. Testing
-
-### Docker Environment Testing
-```bash
-# Test backend health
-curl http://localhost:8001/health
-
-# Test frontend
-curl http://localhost:5173
-
-# Run tests inside containers
-docker-compose exec backend python -m pytest
-docker-compose exec frontend npm run test
-```
-
-### Local Development Testing
-```bash
-# Frontend testing
-cd client
-npm run test
-
-# Backend testing
-cd server
-python -m pytest
-```
-
-## Configuration
-
-### Environment Variables
-Create a `.env` file in the server directory:
-```bash
-LLM_API_URL='LLM_CHAT_END_POINT'
-LLM_API_KEY='YOUR_API_KEY'
-```
+**Built with ❤️ for data analytics teams**
 
 
 

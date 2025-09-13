@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   Bot, 
-  Mail, 
   Lock, 
   User, 
   ArrowLeft, 
   Eye, 
   EyeOff,
-  Github,
-  Chrome,
   Shield,
-  Zap
+  Zap,
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { login, signup, loading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
-    name: '',
     confirmPassword: ''
   });
 
@@ -34,10 +36,70 @@ const Auth = () => {
     navigate('/');
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    if (!formData.username.trim()) {
+      setMessage({ text: 'Username is required', type: 'error' });
+      return false;
+    }
+    
+    if (formData.username.length < 3) {
+      setMessage({ text: 'Username must be at least 3 characters long', type: 'error' });
+      return false;
+    }
+    
+    if (!formData.password) {
+      setMessage({ text: 'Password is required', type: 'error' });
+      return false;
+    }
+    
+    if (formData.password.length < 8) {
+      setMessage({ text: 'Password must be at least 8 characters long', type: 'error' });
+      return false;
+    }
+    
+    if (isSignUp && formData.password !== formData.confirmPassword) {
+      setMessage({ text: 'Passwords do not match', type: 'error' });
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For now, just navigate to chat - we'll implement actual auth later
-    navigate('/chat');
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    setMessage({ text: '', type: '' });
+    
+    try {
+      let result;
+      
+      if (isSignUp) {
+        result = await signup(formData.username, formData.password);
+      } else {
+        result = await login(formData.username, formData.password);
+      }
+      
+      if (result.success) {
+        setMessage({ 
+          text: isSignUp ? 'Account created successfully!' : 'Login successful!', 
+          type: 'success' 
+        });
+        
+        // Navigate to chat after a short delay
+        setTimeout(() => {
+          navigate('/chat');
+        }, 1000);
+      } else {
+        setMessage({ text: result.error, type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'An unexpected error occurred', type: 'error' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -45,17 +107,33 @@ const Auth = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    
+    // Clear message when user starts typing
+    if (message.text) {
+      setMessage({ text: '', type: '' });
+    }
   };
 
   const toggleAuthMode = () => {
     setIsSignUp(!isSignUp);
     setFormData({
-      email: '',
+      username: '',
       password: '',
-      name: '',
       confirmPassword: ''
     });
+    setMessage({ text: '', type: '' });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -170,51 +248,35 @@ const Auth = () => {
                 </p>
               </div>
 
-              {/* Social Login */}
-              <div className="space-y-3 mb-6">
-                <button className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-600 rounded-xl hover:border-gray-500 hover:bg-gray-800/30 transition-all duration-300">
-                  <Chrome className="w-5 h-5" />
-                  <span>Continue with Google</span>
-                </button>
-                <button className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-600 rounded-xl hover:border-gray-500 hover:bg-gray-800/30 transition-all duration-300">
-                  <Github className="w-5 h-5" />
-                  <span>Continue with GitHub</span>
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="flex-1 h-px bg-gray-600"></div>
-                <span className="text-gray-400 text-sm">or</span>
-                <div className="flex-1 h-px bg-gray-600"></div>
-              </div>
+              {/* Message Display */}
+              {message.text && (
+                <div className={`mb-6 p-4 rounded-xl flex items-center space-x-3 ${
+                  message.type === 'error' 
+                    ? 'bg-red-900/20 border border-red-500/30 text-red-400' 
+                    : 'bg-green-900/20 border border-green-500/30 text-green-400'
+                }`}>
+                  {message.type === 'error' ? (
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  ) : (
+                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                  )}
+                  <span className="text-sm">{message.text}</span>
+                </div>
+              )}
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
-                {isSignUp && (
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Full Name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
-                      required={isSignUp}
-                    />
-                  </div>
-                )}
-                
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={formData.email}
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={formData.username}
                     onChange={handleInputChange}
                     className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 
@@ -228,11 +290,13 @@ const Auth = () => {
                     onChange={handleInputChange}
                     className="w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
                     required
+                    disabled={isSubmitting}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                    disabled={isSubmitting}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -249,26 +313,24 @@ const Auth = () => {
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
                       required={isSignUp}
+                      disabled={isSubmitting}
                     />
-                  </div>
-                )}
-
-                {!isSignUp && (
-                  <div className="flex justify-end">
-                    <button 
-                      type="button"
-                      className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300"
-                    >
-                      Forgot password?
-                    </button>
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02]"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  {isSignUp ? 'Create Account' : 'Sign In'}
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>{isSignUp ? 'Creating Account...' : 'Signing In...'}</span>
+                    </div>
+                  ) : (
+                    isSignUp ? 'Create Account' : 'Sign In'
+                  )}
                 </button>
               </form>
 
@@ -278,7 +340,8 @@ const Auth = () => {
                 </span>
                 <button
                   onClick={toggleAuthMode}
-                  className="ml-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 font-semibold"
+                  disabled={isSubmitting}
+                  className="ml-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 font-semibold disabled:opacity-50"
                 >
                   {isSignUp ? 'Sign In' : 'Sign Up'}
                 </button>
@@ -288,7 +351,8 @@ const Auth = () => {
               <div className="mt-6 pt-6 border-t border-gray-700">
                 <button
                   onClick={() => navigate('/chat')}
-                  className="w-full py-3 border border-gray-600 rounded-xl font-semibold hover:border-gray-500 hover:bg-gray-800/30 transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full py-3 border border-gray-600 rounded-xl font-semibold hover:border-gray-500 hover:bg-gray-800/30 transition-all duration-300 disabled:opacity-50"
                 >
                   Continue as Guest
                 </button>

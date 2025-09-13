@@ -566,15 +566,21 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
           >
             <Box>
               <Typography
-                variant={{ xs: "h6", sm: "h5" }}
-                fontWeight="600"
+                variant="h6"
+                sx={{ 
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                  fontWeight: "600"
+                }}
                 color={colors.grey[100]}
               >
                 Data Trends
               </Typography>
               <Typography
-                variant={{ xs: "h4", sm: "h3" }}
-                fontWeight="bold"
+                variant="h3"
+                sx={{ 
+                  fontSize: { xs: "2rem", sm: "3rem" },
+                  fontWeight: "bold"
+                }}
                 color={colors.greenAccent[500]}
               >
                 {kpiData.sum}
@@ -614,7 +620,8 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
           >
             <Typography 
               color={colors.grey[100]} 
-              variant={{ xs: "h6", sm: "h5" }}
+              variant="h5"
+              sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
               fontWeight="600"
             >
               Data Preview
@@ -632,7 +639,8 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
               <Box flex={1}>
                 <Typography
                   color={colors.greenAccent[500]}
-                  variant={{ xs: "h6", sm: "h5" }}
+                  variant="h5"
+                  sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                   fontWeight="600"
                 >
                   #{i + 1}
@@ -681,7 +689,8 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
           >
             <ProgressCircle size={{ xs: "80", sm: "100", md: "125" }[window.innerWidth < 600 ? 'xs' : window.innerWidth < 900 ? 'sm' : 'md']} progress="0.85" />
             <Typography
-              variant={{ xs: "h6", sm: "h5" }}
+              variant="h5"
+              sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
               color={colors.greenAccent[500]}
               sx={{ mt: { xs: "8px", sm: "12px", md: "15px" } }}
             >
@@ -760,7 +769,8 @@ function Dashboard({ rawTable = [], title = 'Analytics Dashboard' }) {
             gap={{ xs: 1, sm: 0 }}
           >
             <Typography 
-              variant={{ xs: "h6", sm: "h5" }}
+              variant="h5"
+              sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
               fontWeight="600" 
               color={colors.grey[100]}
             >

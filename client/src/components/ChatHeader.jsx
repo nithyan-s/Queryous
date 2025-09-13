@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bot, Moon, Sun, Plus, Download, Database } from "lucide-react";
+import { Bot, Moon, Sun, Plus, Download, Database, LogOut, User } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 const ChatHeader = ({
   prompt,
@@ -20,6 +21,7 @@ const ChatHeader = ({
   isMobile
 }) => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
   const handleDashboardClick = () => {
     navigate("/dashboard", {
@@ -45,6 +47,15 @@ const ChatHeader = ({
       console.log("ChatHeader: darkMode toggled to", !darkMode);
     } else {
       console.error("ChatHeader: setDarkMode is not a function");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
   };
 
@@ -174,6 +185,41 @@ const ChatHeader = ({
               <span className="hidden sm:inline">{csvMode ? "CSV Mode Active" : "Connect"}</span>
               <span className="sm:hidden">{csvMode ? "CSV" : "Connect"}</span>
             </button>
+          )}
+
+          {/* User Info and Logout */}
+          {user && (
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 px-3 py-2 rounded-lg" 
+                   style={{
+                     background: darkMode 
+                       ? 'rgba(59, 130, 246, 0.1)'
+                       : 'rgba(99, 102, 241, 0.1)',
+                     border: darkMode 
+                       ? '1px solid rgba(59, 130, 246, 0.2)'
+                       : '1px solid rgba(99, 102, 241, 0.2)'
+                   }}>
+                <User className="w-4 h-4 text-blue-400" />
+                <span className={`text-sm font-medium ${
+                  darkMode ? 'text-blue-200' : 'text-indigo-600'
+                }`}>
+                  {user.username}
+                </span>
+              </div>
+              
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 px-3 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 text-sm"
+                style={{
+                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                  color: 'white'
+                }}
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            </div>
           )}
 
           <button

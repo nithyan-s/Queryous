@@ -3,6 +3,10 @@ import { User, BotMessageSquare, ChevronLeft, ChevronRight } from "lucide-react"
 import { VegaLite } from 'react-vega';
 import MessageActions from "./MessageActions.jsx";
 
+// Ensure Vega-Lite is properly configured
+import * as vega from 'vega';
+import * as vegaLite from 'vega-lite';
+
 const ChatMessage = ({
   message,
   darkMode,
@@ -28,11 +32,13 @@ const ChatMessage = ({
   const currentData = message.data ? message.data.slice(startIndex, endIndex) : [];
 
   useEffect(() => {
-    if (message.data && message.data.length > 0) {
+    if (chartType && message.data && Array.isArray(message.data) && message.data.length > 0) {
       try {
+        console.log('Creating chart with:', { chartType, dataLength: message.data.length });
+        
         const columns = Object.keys(message.data[0]);
         if (columns.length < 2) {
-          console.warn('Insufficient columns for chart');
+          console.warn('Insufficient columns for chart:', columns);
           setCurrentSpec(null);
           return;
         }
@@ -43,7 +49,7 @@ const ChatMessage = ({
         switch (chartType) {
           case 'bar':
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { 
                 type: 'bar',
@@ -53,14 +59,14 @@ const ChatMessage = ({
                 x: { field: xField, type: 'nominal', axis: { labelAngle: -45 } },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: "container",
+              width: 400,
               height: 300
             };
             break;
             
           case 'line':
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { 
                 type: 'line',
@@ -72,14 +78,14 @@ const ChatMessage = ({
                 x: { field: xField, type: 'ordinal' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: "container",
+              width: 400,
               height: 300
             };
             break;
             
           case 'scatter':
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { 
                 type: 'point',
@@ -90,14 +96,14 @@ const ChatMessage = ({
                 x: { field: xField, type: 'quantitative' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: "container",
+              width: 400,
               height: 300
             };
             break;
             
           case 'area':
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { 
                 type: 'area',
@@ -108,14 +114,14 @@ const ChatMessage = ({
                 x: { field: xField, type: 'ordinal' },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: "container",
+              width: 400,
               height: 300
             };
             break;
             
           case 'pie':
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { type: 'arc', tooltip: true },
               encoding: {
@@ -130,7 +136,7 @@ const ChatMessage = ({
                   }
                 }
               },
-              width: "container",
+              width: 400,
               height: 300,
               view: { stroke: null }
             };
@@ -138,7 +144,7 @@ const ChatMessage = ({
             
           default:
             spec = {
-              $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+              $schema: "https://vega.github.io/schema/vega-lite/v6.json",
               data: { values: message.data },
               mark: { 
                 type: 'bar',
@@ -148,14 +154,19 @@ const ChatMessage = ({
                 x: { field: xField, type: 'nominal', axis: { labelAngle: -45 } },
                 y: { field: yField, type: 'quantitative' }
               },
-              width: "container",
+              width: 400,
               height: 300
             };
         }
         
         if (spec) {
           spec.background = darkMode ? "#1e293b" : "#ffffff";
+          spec.autosize = {
+            type: "fit",
+            contains: "padding"
+          };
           spec.config = {
+            view: { strokeWidth: 0 },
             axis: {
               domainColor: darkMode ? "#3b82f6" : "#6366f1",
               tickColor: darkMode ? "#3b82f6" : "#6366f1",
@@ -169,6 +180,9 @@ const ChatMessage = ({
             }
           };
           
+          console.log('Generated chart spec:', spec);
+          console.log('Chart data length:', message.data?.length);
+          console.log('Chart type:', chartType);
           setCurrentSpec(spec);
         } else {
           setCurrentSpec(null);
@@ -487,13 +501,20 @@ const ChatMessage = ({
                   }}
                 >
                   <div className="p-3 sm:p-6">
-                    <div className="w-full min-h-[250px] sm:min-h-[320px] flex items-center justify-center">
+                    <div className="w-full" style={{ minHeight: '350px', maxWidth: '500px', margin: '0 auto' }}>
                       <VegaLite 
                         spec={currentSpec} 
                         actions={false}
                         renderer="svg"
+                        mode="vega-lite"
                         onError={(error) => {
                           console.error('VegaLite error:', error);
+                        }}
+                        onSignalTooltip={(name, value) => {
+                          console.log('VegaLite tooltip:', name, value);
+                        }}
+                        onNewView={(view) => {
+                          console.log('VegaLite view created:', view);
                         }}
                       />
                     </div>
