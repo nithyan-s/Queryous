@@ -74,7 +74,8 @@ ENVIRONMENT=production
 4. Set root directory: `server`
 5. Set build command: `pip install -r requirements.txt`
 6. Set start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-7. Add environment variables from your `.env` file
+7. **IMPORTANT**: Set Python version to `3.11.9` (avoid Python 3.13)
+8. Add environment variables from your `.env` file
 
 ## 🔧 Local Development
 
@@ -164,6 +165,34 @@ npm run dev
 - ✅ CORS configuration
 - ✅ Environment variable protection
 - ✅ Input validation
+
+## 🚨 Troubleshooting
+
+### **Python 3.13 Compatibility Issues**
+If you get pandas compilation errors like:
+```
+error: too few arguments to function '_PyLong_AsByteArray'
+```
+
+**Solution**: Use Python 3.11.9 instead of 3.13
+1. In Render: Set Python version to `3.11.9` in Settings
+2. Added `runtime.txt` with `python-3.11.9`
+3. Pandas doesn't support Python 3.13 yet
+
+**Note**: DuckDB 0.10.3 is fully compatible with Python 3.11.9 ✅
+
+### **Common Deployment Issues**
+```bash
+# Build fails on Render
+- Check Python version (use 3.11.9)
+- Verify requirements.txt syntax
+- Check environment variables
+
+# Frontend can't connect to backend
+- Verify VITE_API_URL in Vercel
+- Check CORS settings in FastAPI
+- Ensure Render service is running
+```
 
 ---
 
