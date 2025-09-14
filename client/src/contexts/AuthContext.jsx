@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // API base URL
-const API_BASE = 'http://queryous.imnitz.tech';
+const API_BASE = 'https://queryous-3.onrender.com';
 
 // Create axios instance with interceptors
 const api = axios.create({
