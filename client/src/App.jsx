@@ -215,7 +215,7 @@ const App = () => {
     
     try {
       // Send request to backend
-      const API_URL = "https://queryous.imnitz.tech" || "http://localhost:8001";
+      const API_URL = "https://queryous-3.onrender.com" || "http://localhost:8001";
 
       const response = await fetch(`${API_URL}/ask`, {
         method: "POST",
