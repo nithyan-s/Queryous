@@ -215,11 +215,13 @@ const App = () => {
     
     try {
       // Send request to backend
-      const response = await fetch("http://localhost:8001/ask", {
+      const API_URL = "https://queryous.imnitz.tech" || "http://localhost:8001";
+
+      const response = await fetch(`${API_URL}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: inputValue }),
-      });
+     });
       
       if (!response.ok) {
         const errorData = await response.json();
