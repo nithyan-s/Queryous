@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // API base URL
-const API_BASE = 'http://localhost:8001';
+const API_BASE = 'http://queryous.imnitz.tech';
 
 // Create axios instance with interceptors
 const api = axios.create({
