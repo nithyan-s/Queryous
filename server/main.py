@@ -7,6 +7,7 @@ Business logic and utilities are imported from separate modules.
 
 # Standard library imports
 import traceback
+import os
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
@@ -73,9 +74,11 @@ app = FastAPI(
 )
 
 # Configure CORS middleware to allow cross-origin requests from frontend
+# Get frontend URL from environment variable
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://queryous.imnitz.tech")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://queryous.imnitz.tech"],  # In production, specify exact origins
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
