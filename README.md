@@ -2,7 +2,7 @@
 
 A full-stack data analytics chatbot with real-time dashboard visualization built using **React** and **FastAPI**, designed for enterprise-level data analysis and reporting.
 
-## 🚀 Features
+## Features
 
 - **JWT Authentication System** - Secure user registration and login
 - **Database Connection Management** - Connect to MySQL, PostgreSQL, SQL Server
@@ -12,7 +12,7 @@ A full-stack data analytics chatbot with real-time dashboard visualization built
 - **Session History** - Track and revisit past queries
 - **Responsive Dashboard** - Material-UI components
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Queryous/
@@ -21,7 +21,7 @@ Queryous/
 └── docker-compose.yml
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Option 1: Docker (Recommended)**
 ```bash
@@ -48,7 +48,7 @@ npm install
 npm run dev
 ```
 
-## 🔧 Configuration
+## Configuration
 
 Create `server/.env` from `.env.example`:
 ```bash
@@ -63,7 +63,7 @@ LLM_API_KEY=your_groq_api_key_here
 FRONTEND_URL=http://localhost:5173
 ```
 
-## 📊 Tech Stack
+## Tech Stack
 
 ### **Frontend**
 - React 18 + Vite
@@ -77,7 +77,7 @@ FRONTEND_URL=http://localhost:5173
 - Groq API integration
 - Database connections
 
-## 🔐 Authentication
+## Authentication
 
 ### **JWT-Based System**
 - User registration/login
@@ -108,7 +108,7 @@ FRONTEND_URL=http://localhost:5173
 - Export capabilities
 - Real-time updates
 
-## 🚀 Deployment
+## Deployment
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
@@ -117,7 +117,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 - **Backend**: Render
 - **Database**: Your choice (MySQL, PostgreSQL, etc.)
 
-## 🧪 Development
+## Development
 
 ### **Project Structure**
 ```
@@ -156,15 +156,15 @@ uvicorn main:app --reload    # Development server
 python -m pytest            # Run tests
 ```
 
-## 🔒 Security Features
+## Security Features
 
-- ✅ JWT token authentication
-- ✅ Password hashing with bcrypt
-- ✅ CORS configuration
-- ✅ Input validation
-- ✅ Environment variable protection
+- JWT token authentication
+- Password hashing with bcrypt
+- CORS configuration
+- Input validation
+- Environment variable protection
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 
@@ -176,11 +176,11 @@ python -m pytest            # Run tests
 ### **Debug Mode**
 Set `ENVIRONMENT=development` in `.env` for detailed error logging.
 
-## 📝 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch
@@ -190,7 +190,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-**Built with ❤️ for data analytics teams**
 
 
 
