@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
-// API base URL
-const API_BASE = 'https://queryous-3.onrender.com';
+// API base URL - use environment variable
+const API_BASE = import.meta.env.VITE_API_URL || 'https://queryous-3.onrender.com';
 
 // Create axios instance with interceptors
 const api = axios.create({

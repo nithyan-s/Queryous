@@ -156,7 +156,7 @@ def get_oauth_redirect_url(provider: str, state: str = None) -> str:
         base_url = "https://accounts.google.com/o/oauth2/v2/auth"
         params = {
             "client_id": GOOGLE_CLIENT_ID,
-            "redirect_uri": f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/auth/callback/google",
+            "redirect_uri": f"{os.getenv('FRONTEND_URL', 'https://queryous.imnitz.tech')}/auth/callback/google",
             "scope": "openid email profile",
             "response_type": "code",
             "access_type": "offline",
@@ -169,7 +169,7 @@ def get_oauth_redirect_url(provider: str, state: str = None) -> str:
         base_url = "https://github.com/login/oauth/authorize"
         params = {
             "client_id": GITHUB_CLIENT_ID,
-            "redirect_uri": f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/auth/callback/github",
+            "redirect_uri": f"{os.getenv('FRONTEND_URL', 'https://queryous.imnitz.tech')}/auth/callback/github",
             "scope": "user:email",
             "response_type": "code"
         }

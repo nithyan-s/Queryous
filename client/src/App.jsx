@@ -9,7 +9,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 
 // Use environment variable for API base URL
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://queryous-3.onrender.com';
 
 import Landing from "./pages/Landing.jsx";
 import Auth from "./pages/Auth.jsx";
@@ -39,6 +39,27 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
+
+  // Wake up Render backend on app load (prevents cold start delays)
+  useEffect(() => {
+    const wakeUpBackend = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/health`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+          console.log("🚀 Backend warmed up successfully!");
+        } else {
+          console.log("⚠️ Backend responded but with error status");
+        }
+      } catch (error) {
+        console.log("❌ Backend wake-up failed:", error.message);
+      }
+    };
+
+    wakeUpBackend();
+  }, []); // Empty dependency array means this runs once on mount
   
   // Initialize messages from session storage or set default welcome message
   const [messages, setMessages] = useState(() => {
@@ -219,13 +240,7 @@ const App = () => {
     
     try {
       // Send request to backend
-<<<<<<< HEAD
       const response = await fetch(`${API_BASE}/ask`, {
-=======
-      const API_URL = "https://queryous-3.onrender.com" || "http://localhost:8001";
-
-      const response = await fetch(`${API_URL}/ask`, {
->>>>>>> 292988afe2ca0f23afbde811b4f6d7fbd20fd15e
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: inputValue }),
