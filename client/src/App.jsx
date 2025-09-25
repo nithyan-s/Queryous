@@ -219,11 +219,17 @@ const App = () => {
     
     try {
       // Send request to backend
+<<<<<<< HEAD
       const response = await fetch(`${API_BASE}/ask`, {
+=======
+      const API_URL = "https://queryous-3.onrender.com" || "http://localhost:8001";
+
+      const response = await fetch(`${API_URL}/ask`, {
+>>>>>>> 292988afe2ca0f23afbde811b4f6d7fbd20fd15e
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: inputValue }),
-      });
+     });
       
       if (!response.ok) {
         const errorData = await response.json();
