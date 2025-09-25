@@ -7,6 +7,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
+
+// Use environment variable for API base URL
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+
 import Landing from "./pages/Landing.jsx";
 import Auth from "./pages/Auth.jsx";
 import Chat from "./pages/Chat.jsx";
@@ -215,7 +219,7 @@ const App = () => {
     
     try {
       // Send request to backend
-      const response = await fetch("http://localhost:8001/ask", {
+      const response = await fetch(`${API_BASE}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: inputValue }),
@@ -281,7 +285,7 @@ const App = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch("http://localhost:8001/upload-csv", {
+      const response = await fetch(`${API_BASE}/upload-csv`, {
         method: "POST",
         body: formData,
       });
@@ -313,7 +317,7 @@ const App = () => {
 
   const handleClearCsv = async () => {
     try {
-      const response = await fetch("http://localhost:8001/clear-csv", {
+      const response = await fetch(`${API_BASE}/clear-csv`, {
         method: "POST",
       });
 
@@ -329,7 +333,7 @@ const App = () => {
 
   const handleExportCsv = async (sqlQuery, filename) => {
     try {
-      const response = await fetch("http://localhost:8001/export-csv", {
+      const response = await fetch(`${API_BASE}/export-csv`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql_query: sqlQuery, filename }),
@@ -362,7 +366,7 @@ const App = () => {
   useEffect(() => {
     const checkCsvStatus = async () => {
       try {
-        const response = await fetch("http://localhost:8001/csv-status");
+        const response = await fetch(`${API_BASE}/csv-status`);
         const data = await response.json();
         setCsvMode(data.is_csv_mode);
       } catch (error) {
@@ -377,7 +381,7 @@ const App = () => {
   const handleConnectDb = async () => {
     setIsConnecting(true);
     try {
-      const response = await fetch("http://localhost:8001/connect-db", {
+      const response = await fetch(`${API_BASE}/connect-db`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dbCredentials),
@@ -408,7 +412,7 @@ const App = () => {
    */
   const handleDisconnectDb = async () => {
     try {
-      await fetch("http://localhost:8001/disconnect-db", {
+      await fetch(`${API_BASE}/disconnect-db`, {
         method: "POST",
       });
       console.log("Disconnected from DB.");
@@ -452,7 +456,7 @@ const App = () => {
   const executeNewSession = async () => {
     // Clear CSV data on backend for fresh session
     try {
-      await fetch("http://localhost:8001/clear-csv", {
+      await fetch(`${API_BASE}/clear-csv`, {
         method: "POST",
       });
     } catch (error) {
@@ -510,7 +514,7 @@ const App = () => {
   const executeSwitchSession = async (sessionId) => {
     // Clear CSV data on backend when switching sessions
     try {
-      await fetch("http://localhost:8001/clear-csv", {
+      await fetch(`${API_BASE}/clear-csv`, {
         method: "POST",
       });
     } catch (error) {
